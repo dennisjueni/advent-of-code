@@ -3,6 +3,13 @@ import * as fs from 'fs';
 const solve = () => {
   const input = fs.readFileSync('./03/input.txt', 'utf8');
 
+  //   const input = `vJrwpWtwJgWrhcsFMMfFFhFp
+  // jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+  // PmmdzqPrVvPwwTWBwg
+  // wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+  // ttgJtRGJQctTZtZT
+  // CrZsJsPPZsGzwwsLwLmpwMDw`;
+
   /*
   Idea:
 	- First split by Rucksack, then by compartment
@@ -12,43 +19,36 @@ const solve = () => {
 
   const splitByRucksack = input.split('\n');
 
-  const scorePerCompartment = splitByRucksack.map((rucksack) => {
-    //split string into two equal length strings
-    const firstCompartment = rucksack.slice(0, rucksack.length / 2);
-    const secondCompartment = rucksack.slice(
-      rucksack.length / 2,
-      rucksack.length
-    );
-    return getScorePerRucksack(firstCompartment, secondCompartment);
-  });
+  let totalScore = 0;
 
-  const sum = scorePerCompartment.reduce((a, b) => a + b, 0);
+  while (splitByRucksack.length > 0) {
+    const [rs1, rs2, rs3] = splitByRucksack.splice(0, 3);
 
-  console.log(sum);
+    totalScore += getScorePerRucksack(rs1, rs2, rs3);
+  }
+
+  console.log(totalScore);
 };
 
-const getScorePerRucksack = (comp1: string, comp2: string) => {
-  const sortedComp1 = [...new Set(comp1.split('').sort())];
-  const sortedComp2 = [...new Set(comp2.split('').sort())];
+const getScorePerRucksack = (comp1: string, comp2: string, comp3: string) => {
+  const sortedComp1 = new Set(comp1.split(''));
+  const sortedComp2 = new Set(comp2.split(''));
+  const sortedComp3 = new Set(comp3.split(''));
 
-  const len1 = sortedComp1.length;
-  const len2 = sortedComp2.length;
+  const intersectSets = (a: Set<string>, b: Set<string>) => {
+    const c = new Set<string>();
+    a.forEach((v) => b.has(v) && c.add(v));
+    return c;
+  };
 
-  let i = 0;
-  let j = 0;
+  const intersectionSet = [sortedComp1, sortedComp2, sortedComp3].reduce(
+    intersectSets
+  );
 
-  let score = 0;
-  while (i < len1 && j < len2) {
-    if (sortedComp1[i] === sortedComp2[j]) {
-      score += letterToPriority(sortedComp1[i]);
-      i++;
-      j++;
-    } else if (sortedComp1[i] < sortedComp2[j]) {
-      i++;
-    } else if (sortedComp1[i] > sortedComp2[j]) {
-      j++;
-    }
-  }
+  const score = [...intersectionSet]
+    .map(letterToPriority)
+    .reduce((a, b) => a + b, 0);
+
   return score;
 };
 
