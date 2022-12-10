@@ -11,4 +11,5 @@ const solve = () => {
 
   console.log(max);
 };
+
 solve();

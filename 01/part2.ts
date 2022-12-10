@@ -13,4 +13,5 @@ const solve = () => {
 
   console.log(sumOfTopThree);
 };
+
 solve();
