@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import { vShow } from 'vue';
 
 const solve = () => {
   const input = fs.readFileSync('./04/input.txt', 'utf8');
